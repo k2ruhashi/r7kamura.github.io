@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge;chrome=1" http-equiv="X-UA-Compatible" />
+    <title>Autodoc - r7kamura blog</title><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" /><link href="/stylesheets/all.css?1386493899" media="all" rel="stylesheet" type="text/css" /><link href="/images/favicon.ico" rel="icon" type="image/ico" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner"><a href="/index.html">
+        <div class="header-image">
+          <img width="100" height="100" class="header-image-element" src="/images/r7kamura.png?1386493899" />
+        </div>
+        <div class="header-text">
+          <h1 class="header-text-title">
+            r7kamura blog
+          </h1>
+          <p class="header-text-description">
+            marking down about tech.
+          </p>
+        </div></a>
+        
+      </div>
+    </header>
+    <div class="main">
+      <div class="main-inner main-inner-single-article"><article class="main-article">
+  <div class="main-article-header">
+    <h1 class="main-article-header-title">
+      Autodoc
+    </h1>
+    <div class="main-article-header-date">
+      2013-12-01
+    </div>
+  </div><p><a href="http://www.adventar.org/calendars/252">闇Advent Calendar</a> 1日目の記事として、最近の開発における心の闇に触れます。
+最近開発した
+<a href="https://github.com/r7kamura/autodoc">Autodoc</a>
+というツールについて簡単に説明した後、
+この手のツールの開発にあたって考えていた、
+創作活動の在り方や、社会の斥力、25歳定年説などについて触れようと思います。</p>
+
+<h2>Autodocとは</h2>
+
+<p>Rack applicationで実装されたAPIに対して、RSpecで書かれたテストを元にAPIドキュメントを生成するもの。
+テストを実行すると、テスト中に発行したリクエストやレスポンス、そのテストに付けられたメッセージを元に、
+良い感じに情報をまとめ、Markdown形式でAPIドキュメントを記したファイルを生成してくれる。
+例えばGitHubではMarkdownファイルを適当に描画してくれるので、
+下図のようにGitHub上で簡単にドキュメントを閲覧出来るようになる。</p>
+
+<p><img src="/images/2013-12-01-autodoc/toc.png" alt=""></p>
+
+<p><img src="/images/2013-12-01-autodoc/github.png" alt=""></p>
+
+<h2>テストの書き方</h2>
+
+<p>下記のようなテストを記述し、AUTODOC=1 という環境変数を与えながらテストを実行すると、
+autodocは./docディレクトリ以下にドキュメントを生成する。
+下記のコードのgetやpostなどのメソッドは、rspec-railsやrack-testが提供してくれているもの。
+autodocを利用する場合は、現状これらの内どちらかを利用する必要がある。
+これらのメソッドは、Rack applicationに対して擬似的にHTTPリクエストを送り、
+@requestや@responseと言った変数にその情報を保存してくれるというもの。
+autodocは、テスト実行時に発生するこの副作用的な側面を利用し、
+保存された情報を元にサンプルのリクエストやレスポンスの情報を組み立て、ドキュメントに記述している。</p>
+
+<pre><code>$ AUTODOC=1 rspec
+$ ls ./doc
+recipes.md toc.md
+</code></pre>
+
+<pre><code class="ruby">require &quot;spec_helper&quot;
+
+describe &quot;Recipes&quot; do
+  describe &quot;GET /recipes/:id&quot; do
+    let(:recipe) do
+      Recipe.create(name: &quot;test&quot;, type: 2)
+    end
+
+    it &quot;returns the recipe&quot;, :autodoc do
+      get &quot;/recipes/#{recipe.id}&quot;
+      response.status.should == 200
+    end
+  end
+
+  describe &quot;POST /recipes&quot; do
+    it &quot;creates a new recipe&quot;, :autodoc do
+      post &quot;/recipes&quot;, name: &quot;test&quot;, type: 1
+      response.status.should == 201
+    end
+  end
+end
+</code></pre>
+
+<h2>テストからドキュメントを生成する利点</h2>
+
+<p>実装を元に生成されたものである(人間が適当に書いたものではない)という信頼性と、
+記述コストの低さが利点だと思う。
+人間が適当に書いたものは間違いがあるかもしれない。
+例えば、typoがあったり、本当は動かないものをドキュメントとして書いているかもしれない。
+それに比べると、テストから生成されたドキュメントはまだ信頼できる。
+少なくともテストが通るようなコードから生成されており、事実を元に情報を集めている。
+よくテストされたドキュメントと言えば聞こえが良いかもしれない。
+記述コストの低さは、ドキュメントを新鮮に保つためにも必要だと思う。
+例えばインターフェースを少し変更したとしても、テストを走らせるだけで更新できるのであれば、
+古いインターフェースに対するドキュメントが残り続けるということは無い。
+昨今の開発方法ならどうせテストは走らせる。
+また、テスト環境ではサンプルデータを用意するコストが少なくて済む。
+テスト環境では様々なMockやStub用の機能が既に揃っているので、
+わざわざドキュメントの為にそういったデータを用意しなくとも、
+僅かなコストでサンプルデータを用意出来る。
+更に、RSpecではテストコードをドキュメントのように記述する傾向があり、
+そのために利用されたメッセージも再利用出来る。
+結局、テストの為につくられた環境は、ドキュメントをつくるのにも都合が良い環境だったと言える。</p>
+
+<h2>テストケースの分け方</h2>
+
+<p>これは運用上のTipsの話だけど、
+1つのテストケースに1つのリクエストとレスポンスが発生するようにテストを分けて書き、
+1つのAPIに対して:autodocタグの付いたテストケースを1つ用意するのがベストプラクティスだと思う。
+異常系や準正常系もドキュメント化しようとすると、同じ内容のものが重複して却って閲覧性が下がることが多い。
+1つのAPIに正常系が複数存在するような場合はなかなか難しい。
+例えば、検索APIとかは条件が多くて難しくなりがち。
+この辺、本当は想定される様々な状況についても情報を含みながら、
+情報量が多くても見やすいドキュメントを提供すべきだと思う。
+しかしながら、実装コストや複雑性等の兼ね合いから、
+今のところMarkdownで正常系だけドキュメント化するという方針に落ち着いている。</p>
+
+<h2>創作活動</h2>
+
+<p>RackとRSpecの組み合わせと言えば、
+以前RackとRSpecを元に静的サイトを生成する <a href="http://r7kamura.github.io/2013/11/18/sitespec.html">Sitespec</a>
+というツールをつくった。このブログもSitespecで生成されている。詳細は別の記事に書いてある。
+最近は、RSpecから何かを生成するものとして、configspecとかinfraspecとかいろんなものが作られているらしい。
+Autodocは現実世界の問題に対する解決策としてつくられたが、
+Sitespecは「RackとRSpecから何かを生成すると面白いかも」という点から
+Autodocをコンセプトにした創作活動としてつくられた。
+創作活動とか、アート活動とか言うと、何故か趣味や遊びのような実益のない原始的な表現活動として捉えられるけど、
+そういう風には考えたくなくて、これはものを創る人間にとって重要な意味を持つ活動だと思う。
+こういった活動から、例えば舞台美術における遠近法のような有益な知識が生まれるということも、
+もしかしたらあるかもしれない。
+Sitespecは、テストの副作用を元にMap-Reduce形式で副産物を生成する、という概念の実装例を示し、
+Autodocに影響を与えた。</p>
+
+<h2>25歳定年説</h2>
+
+<p>探究心や独創性によって、物事が非線形な進化を遂げることもあると思う。
+もし、開発者に対してこういった活動を行うための時間が1%も用意されていないのであれば、それは残念な状態だと思う。
+それに、こういった活動で成果を上げるには、数時間から十数時間の周期でモチベーションを持続させる必要がある。
+もし、さも人間の活動時間が何故か30分単位で等しく交換可能なものとして扱われていたり、
+さも24時間周期でリセット可能なもののように扱われているのであれば、それは非常に残念な状態だと思う。
+こういった状態で創作活動を行う方法は、
+十割以上の圧力をかけて働いて、余った時間で周囲にバレないように内職を行うか、
+仕事後の余暇を利用して開発することぐらいだと思う。
+Autodocも、Sitespecも、Rack::Multiplexerも、Replicatも、Chankoも、
+表面だけ捉えればいい話っぽいが、その大部分は余暇を利用して作られている。
+コードを書かなかった週末が思い出せない。
+その内、精神的な意味で体力というものが薄れ、週末にこういった活動に割く気力が無くなったとき、
+ハッカーとしてはそこで死んでしまうのだと思う。そのことがただ悲しい。
+何となくそういう予兆は感じられているし、あと2年もすればそのときは訪れると思う。
+若者の界隈で、25歳定年説と呼んで震えている。
+特にこの事実について何か主張があるわけではないが、ただこの社会は厳しいということに尽きる。
+社会は厳しいの一言で思考停止するのをやめたい。
+社会の斥力に負けて、心の弾力を失いたくはない。
+無限に活動を続けていたい。</p>
+
+<h2>次回</h2>
+
+<p><a href="http://www.adventar.org/calendars/252">闇Advent Calendar</a> 1日目では、最近の開発における心の闇に触れました。<br>
+次回は<a href="https://twitter.com/hotchemi">@hotchemi</a>さんです。
+最後に、<a href="http://yamirubykaigi.wordpress.com/2011/07/15/keynote/">闇RubyKaigi2011</a>からの一節を引用して〆たいと思います。</p>
+
+<blockquote>
+<p>闇の中から生まれたプログラマーよ<br>
+光を求めるしかないプログラマーよ<br>
+その両手を差し出してくれ<br>
+今宵あなたは美しい</p>
+</blockquote>
+
+</article>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <p class="footer-copyright">
+          Copyright &copy; 2013 by <a target="_blank" href="http://twitter.com/r7kamura">@r7kamura</a>
+        </p>
+        <p class="footer-powers">
+          Powered by <a href="https://github.com/r7kamura/r7kamura.github.io">Github</a> & <a href="https://travis-ci.org/r7kamura/r7kamura.github.io">Travis CI</a> & <a href="https://github.com/r7kamura/sitespec">Sitespec</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

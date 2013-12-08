@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>r7kamura blog</title>
+  <subtitle>marking down about tech.</subtitle>
+  <id>http://r7kamura.github.io/</id>
+  <link href="http://r7kamura.github.io/"/>
+  <link href="http://r7kamura.github.io/feed.xml" rel="self"/>
+  <updated>2013-12-08T00:00:00+00:00</updated>
+  <author>
+    <name>r7kamura</name>
+  </author>
+  <entry>
+    <title>Asciinema</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/12/08/asciinema.html"/>
+    <id>http://r7kamura.github.io/2013/12/08/asciinema.html</id>
+    <published>2013-12-08T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;Asciinemaの使い方、使われ方、使い勝手について。&lt;/p&gt;
+
+&lt;h2&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href="http://asciinema.org/"&gt;Asciinema&lt;/a&gt;という、端末上の操作を録画するツールとそのホスティングサービスがある。
+「Record and share your terminal sessions, the right way」とのこと。
+ざっくり言うとTerminal版&lt;a href="http://gifzo.net/"&gt;Gifzo&lt;/a&gt;みたいなもので、こういう感じで利用できる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# install
+sudo easy_install pip
+sudo pip install asciinema
+
+# usage - 新しいsessionが立ち上がり、exitするまで記録される
+asciinema rec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;script type="text/javascript" src="http://asciinema.org/a/6669.js" id="asciicast-6669" data-size="small" async&gt;&lt;/script&gt;
+
+&lt;h2&gt;使われ方&lt;/h2&gt;
+
+&lt;p&gt;例えば、Asciinemaは&lt;a href="http://docs.docker.io/en/latest/examples/hello_world/"&gt;DockerのTutorial&lt;/a&gt;で使われている(またDockerか)。
+Dockerは自分にとって新しい概念を導入するものだったので、
+入力と出力の様子を見ながら外側からシステムの動きを把握していくことで、徐々に理解が深められた。
+Dockerは実行環境の用意に少し時間が掛かるので、
+Ubuntuのdownloadを行っている間に説明を見ていたおかげで最初の理解がとても早かった。&lt;/p&gt;
+
+&lt;p&gt;他人にプログラムの動作を伝えるときに便利に使えるので、
+例えば、&lt;a href="https://twitter.com/r7kamura/status/409584072998932480"&gt;こういうやりとり&lt;/a&gt;
+において物事が少し分かりやすく伝達出来ると思う。
+新しいCLIツールを作ったときに、簡単な使い方を録画してリンクをREADMEに貼るみたいな感じで使うのも良いかもしれない。&lt;/p&gt;
+
+&lt;h2&gt;魅力性&lt;/h2&gt;
+
+&lt;p&gt;昼下がりにTVを付けるとたまたま放送大学で品質評価とリーダビリティについての講義が行われていて、
+ISO 9126(ソフトウェア品質の評価に関する国際規格)という規格の中で、
+ソフトウェアを品質の観点から整理した ソフトウェア品質特性 という定義があり、
+ソフトウェア品質特性を大別した6つのカテゴリの中に、使い勝手や使いやすさといった特性を表す使用性という項目があり、
+更に使用性を細かく分類した品質副特性の中で 魅力性 という項目が定義されているということが紹介されていた。
+Asciinemaを介した情報伝達は実際やってみると意外とかっこ良くて、
+Asciinemaに対してちょっと良いなと感じた理由は、その辺の魅力性が使い勝手への評価に加味されたからじゃないかと思う。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Autodoc</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/12/01/autodoc.html"/>
+    <id>http://r7kamura.github.io/2013/12/01/autodoc.html</id>
+    <published>2013-12-01T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/252"&gt;闇Advent Calendar&lt;/a&gt; 1日目の記事として、最近の開発における心の闇に触れます。
+最近開発した
+&lt;a href="https://github.com/r7kamura/autodoc"&gt;Autodoc&lt;/a&gt;
+というツールについて簡単に説明した後、
+この手のツールの開発にあたって考えていた、
+創作活動の在り方や、社会の斥力、25歳定年説などについて触れようと思います。&lt;/p&gt;
+
+&lt;h2&gt;Autodocとは&lt;/h2&gt;
+
+&lt;p&gt;Rack applicationで実装されたAPIに対して、RSpecで書かれたテストを元にAPIドキュメントを生成するもの。
+テストを実行すると、テスト中に発行したリクエストやレスポンス、そのテストに付けられたメッセージを元に、
+良い感じに情報をまとめ、Markdown形式でAPIドキュメントを記したファイルを生成してくれる。
+例えばGitHubではMarkdownファイルを適当に描画してくれるので、
+下図のようにGitHub上で簡単にドキュメントを閲覧出来るようになる。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/images/2013-12-01-autodoc/toc.png" alt=""&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/images/2013-12-01-autodoc/github.png" alt=""&gt;&lt;/p&gt;
+
+&lt;h2&gt;テストの書き方&lt;/h2&gt;
+
+&lt;p&gt;下記のようなテストを記述し、AUTODOC=1 という環境変数を与えながらテストを実行すると、
+autodocは./docディレクトリ以下にドキュメントを生成する。
+下記のコードのgetやpostなどのメソッドは、rspec-railsやrack-testが提供してくれているもの。
+autodocを利用する場合は、現状これらの内どちらかを利用する必要がある。
+これらのメソッドは、Rack applicationに対して擬似的にHTTPリクエストを送り、
+@requestや@responseと言った変数にその情報を保存してくれるというもの。
+autodocは、テスト実行時に発生するこの副作用的な側面を利用し、
+保存された情報を元にサンプルのリクエストやレスポンスの情報を組み立て、ドキュメントに記述している。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ AUTODOC=1 rspec
+$ ls ./doc
+recipes.md toc.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class="ruby"&gt;require &amp;quot;spec_helper&amp;quot;
+
+describe &amp;quot;Recipes&amp;quot; do
+  describe &amp;quot;GET /recipes/:id&amp;quot; do
+    let(:recipe) do
+      Recipe.create(name: &amp;quot;test&amp;quot;, type: 2)
+    end
+
+    it &amp;quot;returns the recipe&amp;quot;, :autodoc do
+      get &amp;quot;/recipes/#{recipe.id}&amp;quot;
+      response.status.should == 200
+    end
+  end
+
+  describe &amp;quot;POST /recipes&amp;quot; do
+    it &amp;quot;creates a new recipe&amp;quot;, :autodoc do
+      post &amp;quot;/recipes&amp;quot;, name: &amp;quot;test&amp;quot;, type: 1
+      response.status.should == 201
+    end
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2&gt;テストからドキュメントを生成する利点&lt;/h2&gt;
+
+&lt;p&gt;実装を元に生成されたものである(人間が適当に書いたものではない)という信頼性と、
+記述コストの低さが利点だと思う。
+人間が適当に書いたものは間違いがあるかもしれない。
+例えば、typoがあったり、本当は動かないものをドキュメントとして書いているかもしれない。
+それに比べると、テストから生成されたドキュメントはまだ信頼できる。
+少なくともテストが通るようなコードから生成されており、事実を元に情報を集めている。
+よくテストされたドキュメントと言えば聞こえが良いかもしれない。
+記述コストの低さは、ドキュメントを新鮮に保つためにも必要だと思う。
+例えばインターフェースを少し変更したとしても、テストを走らせるだけで更新できるのであれば、
+古いインターフェースに対するドキュメントが残り続けるということは無い。
+昨今の開発方法ならどうせテストは走らせる。
+また、テスト環境ではサンプルデータを用意するコストが少なくて済む。
+テスト環境では様々なMockやStub用の機能が既に揃っているので、
+わざわざドキュメントの為にそういったデータを用意しなくとも、
+僅かなコストでサンプルデータを用意出来る。
+更に、RSpecではテストコードをドキュメントのように記述する傾向があり、
+そのために利用されたメッセージも再利用出来る。
+結局、テストの為につくられた環境は、ドキュメントをつくるのにも都合が良い環境だったと言える。&lt;/p&gt;
+
+&lt;h2&gt;テストケースの分け方&lt;/h2&gt;
+
+&lt;p&gt;これは運用上のTipsの話だけど、
+1つのテストケースに1つのリクエストとレスポンスが発生するようにテストを分けて書き、
+1つのAPIに対して:autodocタグの付いたテストケースを1つ用意するのがベストプラクティスだと思う。
+異常系や準正常系もドキュメント化しようとすると、同じ内容のものが重複して却って閲覧性が下がることが多い。
+1つのAPIに正常系が複数存在するような場合はなかなか難しい。
+例えば、検索APIとかは条件が多くて難しくなりがち。
+この辺、本当は想定される様々な状況についても情報を含みながら、
+情報量が多くても見やすいドキュメントを提供すべきだと思う。
+しかしながら、実装コストや複雑性等の兼ね合いから、
+今のところMarkdownで正常系だけドキュメント化するという方針に落ち着いている。&lt;/p&gt;
+
+&lt;h2&gt;創作活動&lt;/h2&gt;
+
+&lt;p&gt;RackとRSpecの組み合わせと言えば、
+以前RackとRSpecを元に静的サイトを生成する &lt;a href="http://r7kamura.github.io/2013/11/18/sitespec.html"&gt;Sitespec&lt;/a&gt;
+というツールをつくった。このブログもSitespecで生成されている。詳細は別の記事に書いてある。
+最近は、RSpecから何かを生成するものとして、configspecとかinfraspecとかいろんなものが作られているらしい。
+Autodocは現実世界の問題に対する解決策としてつくられたが、
+Sitespecは「RackとRSpecから何かを生成すると面白いかも」という点から
+Autodocをコンセプトにした創作活動としてつくられた。
+創作活動とか、アート活動とか言うと、何故か趣味や遊びのような実益のない原始的な表現活動として捉えられるけど、
+そういう風には考えたくなくて、これはものを創る人間にとって重要な意味を持つ活動だと思う。
+こういった活動から、例えば舞台美術における遠近法のような有益な知識が生まれるということも、
+もしかしたらあるかもしれない。
+Sitespecは、テストの副作用を元にMap-Reduce形式で副産物を生成する、という概念の実装例を示し、
+Autodocに影響を与えた。&lt;/p&gt;
+
+&lt;h2&gt;25歳定年説&lt;/h2&gt;
+
+&lt;p&gt;探究心や独創性によって、物事が非線形な進化を遂げることもあると思う。
+もし、開発者に対してこういった活動を行うための時間が1%も用意されていないのであれば、それは残念な状態だと思う。
+それに、こういった活動で成果を上げるには、数時間から十数時間の周期でモチベーションを持続させる必要がある。
+もし、さも人間の活動時間が何故か30分単位で等しく交換可能なものとして扱われていたり、
+さも24時間周期でリセット可能なもののように扱われているのであれば、それは非常に残念な状態だと思う。
+こういった状態で創作活動を行う方法は、
+十割以上の圧力をかけて働いて、余った時間で周囲にバレないように内職を行うか、
+仕事後の余暇を利用して開発することぐらいだと思う。
+Autodocも、Sitespecも、Rack::Multiplexerも、Replicatも、Chankoも、
+表面だけ捉えればいい話っぽいが、その大部分は余暇を利用して作られている。
+コードを書かなかった週末が思い出せない。
+その内、精神的な意味で体力というものが薄れ、週末にこういった活動に割く気力が無くなったとき、
+ハッカーとしてはそこで死んでしまうのだと思う。そのことがただ悲しい。
+何となくそういう予兆は感じられているし、あと2年もすればそのときは訪れると思う。
+若者の界隈で、25歳定年説と呼んで震えている。
+特にこの事実について何か主張があるわけではないが、ただこの社会は厳しいということに尽きる。
+社会は厳しいの一言で思考停止するのをやめたい。
+社会の斥力に負けて、心の弾力を失いたくはない。
+無限に活動を続けていたい。&lt;/p&gt;
+
+&lt;h2&gt;次回&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/252"&gt;闇Advent Calendar&lt;/a&gt; 1日目では、最近の開発における心の闇に触れました。&lt;br&gt;
+次回は&lt;a href="https://twitter.com/hotchemi"&gt;@hotchemi&lt;/a&gt;さんです。
+最後に、&lt;a href="http://yamirubykaigi.wordpress.com/2011/07/15/keynote/"&gt;闇RubyKaigi2011&lt;/a&gt;からの一節を引用して〆たいと思います。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;闇の中から生まれたプログラマーよ&lt;br&gt;
+光を求めるしかないプログラマーよ&lt;br&gt;
+その両手を差し出してくれ&lt;br&gt;
+今宵あなたは美しい&lt;/p&gt;
+&lt;/blockquote&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Rack::Multiplexer</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/11/27/rack-multiplexer.html"/>
+    <id>http://r7kamura.github.io/2013/11/27/rack-multiplexer.html</id>
+    <published>2013-11-27T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="https://github.com/r7kamura/rack-multiplexer"&gt;Rack::Multiplexer&lt;/a&gt;という、複数のRackを束ねるものをつくった。&lt;/p&gt;
+
+&lt;h2&gt;Plack寄せ&lt;/h2&gt;
+
+&lt;p&gt;この前Perl界隈の人達と鍋を囲む機会があって、
+!!1;の話、livedoor BlogのPlack化の話、ISUCONの話、
+各社古いアプリ抱えていて辛いね苦しいね頑張ろうね若者に1日で書き換えさせようといった話をして、
+結局、何となくこの界隈は全体的に「Plack寄せ」が進んでいるねという話に落ち着いた。&lt;/p&gt;
+
+&lt;h2&gt;Rack寄せ&lt;/h2&gt;
+
+&lt;p&gt;一方Ruby界隈だと比較的皆Rackに寄っている傾向にはあると思うけど、
+もっと寄せてみると面白いんじゃないかと思って、Rack::Multiplexerをつくった。既にありそう。
+Rack::Multiplexerは、所謂WebアプリのRouter(=Dispatcher)の処理を行うための実装で、
+メソッドやパスの規則に従って受け取ったリクエストを別のRack applicationに投げられる。
+例えば、GET /x へのリクエストはapp-X、GET /y へのリクエストはapp-Yに、という使い方が出来る。
+以下の例は、3つの単純なRackアプリにルーティングを行う様子。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="ruby"&gt;multiplexer = Rack::Multiplexer.new
+multiplexer.get(&amp;quot;/a&amp;quot;,  -&gt;(env) { [200, {}, [&amp;quot;a&amp;quot;]] })
+multiplexer.post(&amp;quot;/b&amp;quot;, -&gt;(env) { [200, {}, [&amp;quot;b&amp;quot;]] })
+multiplexer.put(&amp;quot;/c&amp;quot;,  -&gt;(env) { [200, {}, [&amp;quot;c&amp;quot;]] })
+multiplexer.call(env)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2&gt;O(1) Router&lt;/h2&gt;
+
+&lt;p&gt;折角なので、Rack::Multiplexerのルーティングアルゴリズムでは正規表現による高速化を試みた。
+&lt;a href="https://github.com/tokuhirom/Router-Boom"&gt;Router::Boom&lt;/a&gt;を参考にした。
+素朴な実装のルータでは、パターンと手続きの組を配列に入れておき、
+配列の先頭からパターンに一致する手続きを探して実行する。
+一方Rack::Multiplexerでは、配列を大きな1つの正規表現に変換しておき、
+この正規表現を実行することで一致する手続きを探し当てるという方法を取る。
+具体的には、個々のパターンを名前付きの括弧で囲んでキャプチャしながら、
+パイプで繋いで1つの正規表現に結合し、一致したキャプチャを調べることで実行すべき手続きを探す
+(※Rubyのオブジェクト単位での計算量をO(1)にしたところで、正規表現エンジン内では依然としてO(N)の計算が発生するが、
+Ruby側でO(N)で操作するよりは若干速いだろうという考え方)。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[/foo/, /bar/, /baz/]
+↓
+↓変換
+↓
+/(?&amp;lt;_0&amp;gt;foo)|(?&amp;lt;_1&amp;gt;bar)|(?&amp;lt;_2&amp;gt;baz)/
+↓
+↓&amp;quot;bar&amp;quot;に適用
+↓
+#&amp;lt;MatchData &amp;quot;bar&amp;quot; _0:nil _1:&amp;quot;bar&amp;quot; _2:nil&amp;gt;
+↓
+↓_1のキャプチャが一致
+↓
+手続きを入れた配列の2番目の要素を実行
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;正規表現のNamed Captureという機能を利用して、個々のパターンに数字付きの名前を割り当てる。
+Named Captureを利用したのは、個々のパターンには更にCaptureが含まれる可能性があったので、
+それと競合しないようにするため。
+これにより、配列を走査せずとも、1つの正規表現を適用するだけで実行すべき手続きを見付けられる。
+ちなみに手元の環境で700個程度ルーティングパターンが存在したとき、
+この方法により速度が17倍程度高速化することが確認できた。
+後日、単純な条件でのパターンの数と速度の関係性を比較してグラフにまとめた。
+v0.0.2は配列を走査していた頃の実装で、v0.0.4では正規表現を利用するようになっている。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/images/2013-11-27-rack-multiplexer/benchmark.png" alt=""&gt;&lt;/p&gt;
+
+&lt;h2&gt;ネットワーク&lt;/h2&gt;
+
+&lt;p&gt;コード例ではごく単純なRackアプリを利用したけれど、RailsやSinatraのアプリをそのまま接続することもできる。
+RailsのRouterにmountという機能があって、Railsアプリに別のアプリを接続出来るんだけど、
+まさにそれと同じようなことがRackの層で実現できる。
+複数のアプリをツリー状に繋げられるようになる。
+今回はRouterをRack化するようなものを作ったけど、他の部分もRackに寄せていって、
+例えばリクエスト前後に行うfilter的な処理とか、validationとか、例外処理とか、
+その辺全部個々のRackとその組み合わせによって実現して、
+大きなネットワーク構造によって1つのシステムを実現するという風に出来ると面白いと思う。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src="/images/2013-11-27-rack-multiplexer/onion.png" alt=""&gt;&lt;/p&gt;
+
+&lt;p&gt;これまでのRackやPlackに対するイメージと言えば、
+Middlewareを入れ子状に組み合わせた上記のようなイメージ(&lt;a href="http://docs.pylonsproject.org/projects/pylons-webframework/en/latest/concepts.html#wsgi-middleware"&gt;引用元&lt;/a&gt;)
+だったけど、個々のRackのノードからなるツリー構造のネットワークがあり、
+それも実行時に経路が変わったり(例えば特定の条件によるCacheの有無)、
+という仕組みがあるともっと面白くなるかもしれない。&lt;/p&gt;
+
+&lt;h2&gt;アート活動&lt;/h2&gt;
+
+&lt;p&gt;Rack::Multiplexerは概念実証として作ったアート作品みたいなもので、
+普段の考え方から若干ズレた存在を認識することで、既存の道具の有り様を捉え直せれば良いかなと思ってつくった。
+最近つくったSitespecもそうで、人類はとにかくテストを書いているけれど、
+テストを書くという行為が一体どういう意味を持っているかについて、
+少し考え直してみるためにSitespecが出来た。
+テストからWebサイトが出てくるという歪な存在のものをつくることで、人間を混乱させて、
+自分がどんな行為を行っていて、そこにどういう意味を持たせようとしているのか、
+いま使っている道具は自分にとって一体どういう存在なのか、ということに考えが行くようになれば良いかも、
+という考えだった。ここまで書いたことは全部嘘で、本当は何も考えてなくて単純に面白ければいいと思ってつくった。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Sitespec</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/11/18/sitespec.html"/>
+    <id>http://r7kamura.github.io/2013/11/18/sitespec.html</id>
+    <published>2013-11-18T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="https://github.com/r7kamura/sitespec"&gt;Sitespec&lt;/a&gt;という静的サイト生成ツールを作り、このブログを移行した。&lt;/p&gt;
+
+&lt;h2&gt;Sitespec&lt;/h2&gt;
+
+&lt;p&gt;Sitespecは、Webアプリとテストから静的サイトを生成するためのツール。
+WebアプリにはRackを、テストにはRSpecを使う。
+Rackを使った適当なWebアプリを用意し、
+RSpecでHTTPリクエストを発行するように記述したテストを実行すると、
+レスポンスの内容から静的ファイルが生成されるという仕組みになっている。
+参考までに紹介しておくと、静的サイト生成ツールには他に
+&lt;a href="http://middlemanapp.com/"&gt;Middleman&lt;/a&gt;や&lt;a href="http://octopress.org/"&gt;Octopress&lt;/a&gt;、&lt;a href="http://www.movabletype.jp/"&gt;Movable Type&lt;/a&gt; などが存在する。&lt;/p&gt;
+
+&lt;h2&gt;Middleman&amp;#39;s Imperialism&lt;/h2&gt;
+
+&lt;p&gt;このブログも、最初の7日間は&lt;a href="http://r7kamura.github.io/2013/11/10/hello-world.html"&gt;Middlemanを利用して作られていた&lt;/a&gt;。
+逆に言うと、7日間しか我慢できなかったということになる。
+Middlemanの嫌いなところは、何をするにもMiddlemanに従う必要があることだった。
+Middlemanを使うには、Middlemanのチュートリアルを読み、
+Middlemanの初期化コマンドでファイル群を生成し、
+MiddlemanのDSLでconfig.ruを編集し、
+Middlemanのコマンドでファイルをビルドする必要がある。
+何をするにも学習コストが発生し、他に活かせる知識が得られる訳でも無い。
+ドキュメントに書いていない知識やルールが沢山あり、
+Middleman自体を内側から変えようとしても、実装は15万行もある。
+こういった状況でMiddlemanを使い続けることに嫌気が差し、
+既存のツールを組み合わせて小さな独立したプログラムを作ることにした。
+これがSitespecの始まりだ。&lt;/p&gt;
+
+&lt;h2&gt;Why Rack and RSpec?&lt;/h2&gt;
+
+&lt;p&gt;どうしてRackとRSpecなのか、という疑問に答えておきたい。
+エディタにしろ言語にしろ、
+結局選ぶ理由は「好きだから」という言葉に尽きるのだけど、
+いざと言うとき偉い人に説明する用に合理的な理由を述べておく。
+Sitespecでは「再利用できること」を重視した。
+全く新しいものを作るのではなく、既に在るものを再利用して作る。
+Sitespecの為につくったものが他でも再利用できる。
+他の場所でつくられたものをSitespecに再利用できる。
+Sitespecを使って得られた知識を他の場所でも再利用できる。
+そういう風に再利用性の高いものを作ろうとした結果、
+WebアプリにRack、ビルドにRSpecという選択になった。
+どちらも広く使われていて、多くの周辺技術が開発されている。&lt;/p&gt;
+
+&lt;h2&gt;Stillness in motion&lt;/h2&gt;
+
+&lt;p&gt;静的サイトというのは、動的サイトのある状態を部分的に切り取ったものに過ぎない。
+そういう考えのもと、動的サイトも静的サイトも同じように作れるようにすることで、
+これまでRailsやSinatraでWebアプリを作ってきた人が同じ知識を使い回せるようになる。
+逆も然りで、Sitespec用に覚えた知識は他でも使い回すことができる。
+知識だけでなく道具もそうで、
+Rack用に作られた数々のmiddlewareやアプリを再利用することができる。
+例えばこのブログには、Rackの上に作られたSinatra、
+の更に上に作られたPadrinoというフレームワークを利用していて、
+リクエストの処理や、URLの変換、HTMLの描画等で力を借りている。
+またRack用に作られたRack::LiveReloadというmiddlewareを使って、
+記事更新時に自動でブラウザが更新されるようになっている。&lt;/p&gt;
+
+&lt;h2&gt;RSpec as a Command-Line Tool&lt;/h2&gt;
+
+&lt;p&gt;RSpecを採用するのはかなり面白い判断だったと思う。
+これが上手くいくかどうかは自分でもよく分からなかったが、
+面白そうという期待に賭けてみたかったので採用した。
+RSpecの副産物として何かが生成されるという考え方は、
+APIのテストからAPIドキュメントを生成する&lt;a href="https://github.com/r7kamura/autodoc"&gt;autodoc&lt;/a&gt;にも見られる。
+SitespecにおけるRSpecは、記述性の高いDSLを提供する、よく出来たコマンドラインツールという位置付けだ。
+決して最高とは言えないが、そこそこに人間が読める形式の仕様書が記述でき、
+便利なテスト実行ツールと、出力形式や実行計画を変更するためのオプションが備わっている。
+Sitespecでは、RSpecをビルドのためのコマンドラインツールとして使い、
+フォーマッタの仕組みを使い独自の出力形式に変更することで良い感じの見た目を提供している。
+テストツールとしての機能も当然利用しており、
+例えばWebアプリから4xxや5xx系のエラーコードが返ってくるとそこでテストが失敗し、
+ビルドが終了するようになっている。
+またレスポンスの中身を更にテストすることも出来る。
+例えば、typoやリンク切れが無いか調べたり、W3CのLintに通すといったことも可能だろう。
+更に進んだ使い方として、Travis CIでテストを実行し、
+成功すればビルドした結果をGitHub PagesにPushして公開、
+失敗すればメールで通知するといった使い方も可能だ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rspec
+Build started...
+
+✔ build/2013/11/10/hello-world.html
+✔ build/2013/11/15/happy-pull-request.html
+✔ build/images/favicon.ico
+✔ build/images/r7kamura.png
+✔ build/images/2013-11-10-hello-world/build-pipeline.png
+✔ build/images/2013-11-15-happy-pull-request/pull-request.png
+✔ build/index.html
+✔ build/stylesheets/all.css
+✔ build/feed.xml
+
+Build finished with 9 files in 0.28465 seconds.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2&gt;Minimal Viable Program&lt;/h2&gt;
+
+&lt;p&gt;Sitespecを利用した、最も単純で実行可能なプログラムの例を紹介する。
+どんなリクエストが来ても&amp;quot;hello world&amp;quot;という文字列を返すRackアプリと、
+GET /index.html というHTTPリクエストを発行するテストを書いた。
+このテストを実行すると、buildディレクトリ以下にファイルが生成される。
+/index.htmlにHTTPリクエストを発行することで、
+build/index.htmlが生成され、
+Rackアプリが返す&amp;quot;hello world&amp;quot;という文字列が書き込まれる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="ruby"&gt;# example_spec.rb
+require &amp;quot;sitespec&amp;quot;
+
+Sitespec.configuration.application = -&gt;(env) do
+  [200, {}, [&amp;quot;hello world\n&amp;quot;]]
+end
+
+describe &amp;quot;This site&amp;quot; do
+  include Sitespec
+
+  it &amp;quot;provides the following files&amp;quot; do
+    get &amp;quot;/index.html&amp;quot;
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rspec example_spec.rb
+Build started...
+
+✔ build/index.html
+
+Build finished with 1 files in 0.00147 seconds.
+$ cat build/index.html
+hello world
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2&gt;今回はここまで&lt;/h2&gt;
+
+&lt;p&gt;Sitespecという静的サイト生成ツールについて、
+Middlemanから移行した背景と、RackとRSpecを採用した理由、そして簡単なサンプルコードを紹介した。
+Sitespecは、テストから静的サイトを生成すれば面白いのではという考えのもとで生まれた、
+それ自身は200行かそこらの小さなプログラムに過ぎないが、
+組み合わせ次第でもっと面白いことが実現できるようになると思う。
+最後に、Sitespecのソースコードと、使用例としてこのブログのソースコードを載せておく。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/r7kamura/sitespec"&gt;r7kamura/sitespec&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/r7kamura/r7kamura.github.io"&gt;r7kamura/r7kamura.github.io&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Happy Pull Request</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/11/15/happy-pull-request.html"/>
+    <id>http://r7kamura.github.io/2013/11/15/happy-pull-request.html</id>
+    <published>2013-11-15T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;img src="/images/2013-11-15-happy-pull-request/pull-request.png" alt=""&gt;&lt;/p&gt;
+
+&lt;p&gt;「&lt;a href="https://github.com/r7kamura/r7kamura.github.io/pulls?direction=desc&amp;amp;page=1&amp;amp;sort=created&amp;amp;state=closed"&gt;おれはブログをGitHubに置いていたと思ったらPull Requestをもらっていた&lt;/a&gt;」&lt;/p&gt;
+
+&lt;p&gt;おれは今オープンソースのブログをほんのちょっぴりだが体験した。
+いや、体験したというよりはまったく理解を超えていたのだが。
+何を言っているか分からないと思うが、おれも何をされたのか分からなかった。
+ホスティングサイトだとか、バージョン管理だとか、そんなチャチなもんじゃ断じてない、
+もっと恐ろしいものの片鱗を味わった。&lt;/p&gt;
+
+&lt;h2&gt;人最高&lt;/h2&gt;
+
+&lt;p&gt;自分のプロダクトに対してPull Requestを生まれて初めてもらったのは、確か去年の夏のことだった。
+当時すごく嬉しかったことは今でも覚えていて、
+それは「黒い画面のログをブラウザに流せるようにして、しかも工夫次第で音とか流せるようにしました、ゲラゲラ」
+みたいなプロジェクトで、それをわざわざ拙い英語を見てインストールしてくれて、
+しかも僕のミスで何か不具合があって動かなくて、それを原因調べて、直して、
+こうやって直せるっぽいのでどうですか、という風に提案してきてくれて、
+人すごい、人最高、インターネット最高、インターネット、インタッーネット!!!!!!!!、
+といった感じでとにかく人間の善性とインターネットに可能性を感じていた。&lt;/p&gt;
+
+&lt;h2&gt;貢献&lt;/h2&gt;
+
+&lt;p&gt;時間の流れというのは恐ろしいもので、新卒として入社した職場ではGitHub Enterpriseが導入され、
+とにかく強くならなければ、力を持たなければならないという一心で
+全てのPull Requestを&lt;a href="https://speakerdeck.com/r7kamura/how-to-grow-up-in-cookpad"&gt;読み続け&lt;/a&gt;、
+それが具体的に何を指すのかも、ほとんど脅迫的とも言えるようなその思いがどこから湧いてくるのかも分からず、
+僕はただ働き続け、気付けば日々弾力を失っていく心。
+Pull Requestというものを日常業務として淡々とこなすようになっていた中で、
+しかしてこのブログに対するPull Requestは、
+かつての人間の善性とインターネットに対する可能性を思い起こさせるに足るものだった。
+無機質にインターネットにのめり込むうち、
+人間の行動原理を好奇心という側面でしか捉えられないようになっていたけれど、
+誰かに貢献したいという気持ちが人間を動かすこともある。
+少なくとも今の自分は、とにかくインターネットに貢献したいという気持ちで溢れている。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Hello world</title>
+    <link rel="alternate" href="http://r7kamura.github.io/2013/11/10/hello-world.html"/>
+    <id>http://r7kamura.github.io/2013/11/10/hello-world.html</id>
+    <published>2013-11-10T00:00:00+00:00</published>
+    <updated>2013-12-08T09:10:22+00:00</updated>
+    <author>
+      <name>r7kamura</name>
+    </author>
+    <content type="html">&lt;p&gt;技術関係の小ネタを書くために新しくブログを作った。&lt;/p&gt;
+
+&lt;h2&gt;ブログどれ使うか問題&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href="http://tumblr.com"&gt;tumblr&lt;/a&gt;、
+&lt;a href="https://medium.com/"&gt;medium&lt;/a&gt;、
+&lt;a href="http://hatenablog.com"&gt;hatenablog&lt;/a&gt;、
+&lt;a href="http://scriptogr.am"&gt;scriptogr.am&lt;/a&gt; などを検討した後、
+今回は&lt;a href="http://middlemanapp.com/"&gt;Middleman&lt;/a&gt;とGitHub Pagesを利用することにした。
+tumblrは、手軽に使えて、無料で広告が出ず、HTMLテンプレートは全て自分で編集できるが、記事編集画面が少し使いづらい。
+mediumはオシャレだけど、表参道みたいな息苦しさがある。
+はてなブログは、はてなスターや通知、編集画面が便利で最高だけど、
+無料だと広告が出るし、HTMLテンプレート全体を自由に編集できない。
+scriptogr.amはDropboxに記事を置くと公開されるという仕組みが面白いけれど、まだBeta版品質という感じがする。&lt;/p&gt;
+
+&lt;h2&gt;Middlemanについて&lt;/h2&gt;
+
+&lt;p&gt;MiddlemanはWebサイトに必要な静的ファイルを生成するためのツールで、
+SassやMarkdown等のテンプレートを元に、HTMLやCSS、Javascriptといったファイルを生成してくれる。
+Middlemanは初期設定と学習に少し手間が掛かるけど、数時間程度だし、結局自分が好きなように設定出来るのが良い。
+データが全て手元にあるということに安心感がある。静的ファイルを返すだけなので応答速度は速い。
+手元で確認するためのWebサーバが同梱されていて、Live-Reload機能も付いているので非常に便利。
+Previewボタンをポチポチ押して確認しなくて良い。
+使う前に想像していたほど大きなシステムでは無かった。
+Webアプリでも部分的に静的ファイルに置き換えられる箇所は多いので、そういう場面で簡単に適用出来ると良いかもしれない。&lt;/p&gt;
+
+&lt;h2&gt;公開作業の単純化&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src="/images/2013-11-10-hello-world/build-pipeline.png" alt=""&gt;
+ブログは書きたいときにすぐ書けるようにしておかないと途端に腐るので、
+GitHubとTravisCIとDropboxを使って、エディタで記事を書いてフォルダに入れるだけで公開されるようにした。
+GitHubでは、username.github.ioレポジトリのmasterブランチにファイルを置くと、
+http://username.github.io からファイルを配信してくれる。
+Markdownで書いた記事をMiddlemanでHTMLに変換し、これをmasterブランチにpushする。
+Middlemanにはブログを作るための拡張機能があるので、これを使えば簡単に雛形を生成できる。
+静的ファイルの生成を自分で行うのは面倒なので、これはTravis-CIに任せる。
+GitHubのPersonal Access Tokenを利用すれば、Travis-CIからGitHubにpushできる。
+不具合があってbuildにfailするとTravisがメールを投げてくれるので、所謂一般的なCIの役割も兼ねていて便利。
+記事編集のたびにGitHubにPushするのも面倒なので、レポジトリをDropbox内に置き、
+VPSで動かしているプログラムにDropboxを監視させ、代わりにGitHubにPushさせている。
+この辺VPSとか使わずにもう少し便利な仕組みがあると良いと思う。
+このブログのソースコードは&lt;a href="https://github.com/r7kamura/r7kamura.github.io/"&gt;ここ&lt;/a&gt;に置いてある。&lt;/p&gt;
+</content>
+  </entry>
+</feed>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge;chrome=1" http-equiv="X-UA-Compatible" />
+    <title>Sitespec - r7kamura blog</title><link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" /><link href="/stylesheets/all.css?1386493899" media="all" rel="stylesheet" type="text/css" /><link href="/images/favicon.ico" rel="icon" type="image/ico" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner"><a href="/index.html">
+        <div class="header-image">
+          <img width="100" height="100" class="header-image-element" src="/images/r7kamura.png?1386493899" />
+        </div>
+        <div class="header-text">
+          <h1 class="header-text-title">
+            r7kamura blog
+          </h1>
+          <p class="header-text-description">
+            marking down about tech.
+          </p>
+        </div></a>
+        
+      </div>
+    </header>
+    <div class="main">
+      <div class="main-inner main-inner-single-article"><article class="main-article">
+  <div class="main-article-header">
+    <h1 class="main-article-header-title">
+      Sitespec
+    </h1>
+    <div class="main-article-header-date">
+      2013-11-18
+    </div>
+  </div><p><a href="https://github.com/r7kamura/sitespec">Sitespec</a>という静的サイト生成ツールを作り、このブログを移行した。</p>
+
+<h2>Sitespec</h2>
+
+<p>Sitespecは、Webアプリとテストから静的サイトを生成するためのツール。
+WebアプリにはRackを、テストにはRSpecを使う。
+Rackを使った適当なWebアプリを用意し、
+RSpecでHTTPリクエストを発行するように記述したテストを実行すると、
+レスポンスの内容から静的ファイルが生成されるという仕組みになっている。
+参考までに紹介しておくと、静的サイト生成ツールには他に
+<a href="http://middlemanapp.com/">Middleman</a>や<a href="http://octopress.org/">Octopress</a>、<a href="http://www.movabletype.jp/">Movable Type</a> などが存在する。</p>
+
+<h2>Middleman&#39;s Imperialism</h2>
+
+<p>このブログも、最初の7日間は<a href="http://r7kamura.github.io/2013/11/10/hello-world.html">Middlemanを利用して作られていた</a>。
+逆に言うと、7日間しか我慢できなかったということになる。
+Middlemanの嫌いなところは、何をするにもMiddlemanに従う必要があることだった。
+Middlemanを使うには、Middlemanのチュートリアルを読み、
+Middlemanの初期化コマンドでファイル群を生成し、
+MiddlemanのDSLでconfig.ruを編集し、
+Middlemanのコマンドでファイルをビルドする必要がある。
+何をするにも学習コストが発生し、他に活かせる知識が得られる訳でも無い。
+ドキュメントに書いていない知識やルールが沢山あり、
+Middleman自体を内側から変えようとしても、実装は15万行もある。
+こういった状況でMiddlemanを使い続けることに嫌気が差し、
+既存のツールを組み合わせて小さな独立したプログラムを作ることにした。
+これがSitespecの始まりだ。</p>
+
+<h2>Why Rack and RSpec?</h2>
+
+<p>どうしてRackとRSpecなのか、という疑問に答えておきたい。
+エディタにしろ言語にしろ、
+結局選ぶ理由は「好きだから」という言葉に尽きるのだけど、
+いざと言うとき偉い人に説明する用に合理的な理由を述べておく。
+Sitespecでは「再利用できること」を重視した。
+全く新しいものを作るのではなく、既に在るものを再利用して作る。
+Sitespecの為につくったものが他でも再利用できる。
+他の場所でつくられたものをSitespecに再利用できる。
+Sitespecを使って得られた知識を他の場所でも再利用できる。
+そういう風に再利用性の高いものを作ろうとした結果、
+WebアプリにRack、ビルドにRSpecという選択になった。
+どちらも広く使われていて、多くの周辺技術が開発されている。</p>
+
+<h2>Stillness in motion</h2>
+
+<p>静的サイトというのは、動的サイトのある状態を部分的に切り取ったものに過ぎない。
+そういう考えのもと、動的サイトも静的サイトも同じように作れるようにすることで、
+これまでRailsやSinatraでWebアプリを作ってきた人が同じ知識を使い回せるようになる。
+逆も然りで、Sitespec用に覚えた知識は他でも使い回すことができる。
+知識だけでなく道具もそうで、
+Rack用に作られた数々のmiddlewareやアプリを再利用することができる。
+例えばこのブログには、Rackの上に作られたSinatra、
+の更に上に作られたPadrinoというフレームワークを利用していて、
+リクエストの処理や、URLの変換、HTMLの描画等で力を借りている。
+またRack用に作られたRack::LiveReloadというmiddlewareを使って、
+記事更新時に自動でブラウザが更新されるようになっている。</p>
+
+<h2>RSpec as a Command-Line Tool</h2>
+
+<p>RSpecを採用するのはかなり面白い判断だったと思う。
+これが上手くいくかどうかは自分でもよく分からなかったが、
+面白そうという期待に賭けてみたかったので採用した。
+RSpecの副産物として何かが生成されるという考え方は、
+APIのテストからAPIドキュメントを生成する<a href="https://github.com/r7kamura/autodoc">autodoc</a>にも見られる。
+SitespecにおけるRSpecは、記述性の高いDSLを提供する、よく出来たコマンドラインツールという位置付けだ。
+決して最高とは言えないが、そこそこに人間が読める形式の仕様書が記述でき、
+便利なテスト実行ツールと、出力形式や実行計画を変更するためのオプションが備わっている。
+Sitespecでは、RSpecをビルドのためのコマンドラインツールとして使い、
+フォーマッタの仕組みを使い独自の出力形式に変更することで良い感じの見た目を提供している。
+テストツールとしての機能も当然利用しており、
+例えばWebアプリから4xxや5xx系のエラーコードが返ってくるとそこでテストが失敗し、
+ビルドが終了するようになっている。
+またレスポンスの中身を更にテストすることも出来る。
+例えば、typoやリンク切れが無いか調べたり、W3CのLintに通すといったことも可能だろう。
+更に進んだ使い方として、Travis CIでテストを実行し、
+成功すればビルドした結果をGitHub PagesにPushして公開、
+失敗すればメールで通知するといった使い方も可能だ。</p>
+
+<pre><code>$ rspec
+Build started...
+
+✔ build/2013/11/10/hello-world.html
+✔ build/2013/11/15/happy-pull-request.html
+✔ build/images/favicon.ico
+✔ build/images/r7kamura.png
+✔ build/images/2013-11-10-hello-world/build-pipeline.png
+✔ build/images/2013-11-15-happy-pull-request/pull-request.png
+✔ build/index.html
+✔ build/stylesheets/all.css
+✔ build/feed.xml
+
+Build finished with 9 files in 0.28465 seconds.
+</code></pre>
+
+<h2>Minimal Viable Program</h2>
+
+<p>Sitespecを利用した、最も単純で実行可能なプログラムの例を紹介する。
+どんなリクエストが来ても&quot;hello world&quot;という文字列を返すRackアプリと、
+GET /index.html というHTTPリクエストを発行するテストを書いた。
+このテストを実行すると、buildディレクトリ以下にファイルが生成される。
+/index.htmlにHTTPリクエストを発行することで、
+build/index.htmlが生成され、
+Rackアプリが返す&quot;hello world&quot;という文字列が書き込まれる。</p>
+
+<pre><code class="ruby"># example_spec.rb
+require &quot;sitespec&quot;
+
+Sitespec.configuration.application = ->(env) do
+  [200, {}, [&quot;hello world\n&quot;]]
+end
+
+describe &quot;This site&quot; do
+  include Sitespec
+
+  it &quot;provides the following files&quot; do
+    get &quot;/index.html&quot;
+  end
+end
+</code></pre>
+
+<pre><code>$ rspec example_spec.rb
+Build started...
+
+✔ build/index.html
+
+Build finished with 1 files in 0.00147 seconds.
+$ cat build/index.html
+hello world
+</code></pre>
+
+<h2>今回はここまで</h2>
+
+<p>Sitespecという静的サイト生成ツールについて、
+Middlemanから移行した背景と、RackとRSpecを採用した理由、そして簡単なサンプルコードを紹介した。
+Sitespecは、テストから静的サイトを生成すれば面白いのではという考えのもとで生まれた、
+それ自身は200行かそこらの小さなプログラムに過ぎないが、
+組み合わせ次第でもっと面白いことが実現できるようになると思う。
+最後に、Sitespecのソースコードと、使用例としてこのブログのソースコードを載せておく。</p>
+
+<ul>
+<li><a href="https://github.com/r7kamura/sitespec">r7kamura/sitespec</a></li>
+<li><a href="https://github.com/r7kamura/r7kamura.github.io">r7kamura/r7kamura.github.io</a></li>
+</ul>
+
+</article>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-inner">
+        <p class="footer-copyright">
+          Copyright &copy; 2013 by <a target="_blank" href="http://twitter.com/r7kamura">@r7kamura</a>
+        </p>
+        <p class="footer-powers">
+          Powered by <a href="https://github.com/r7kamura/r7kamura.github.io">Github</a> & <a href="https://travis-ci.org/r7kamura/r7kamura.github.io">Travis CI</a> & <a href="https://github.com/r7kamura/sitespec">Sitespec</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
